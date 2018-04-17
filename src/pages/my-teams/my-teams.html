@@ -19,7 +19,18 @@
 
 
 <ion-content padding>
-  <p>you are not currently following any teams</p>
+  <!-- <p>you are not currently following any teams</p> -->
+
+  <ion-list>
+      <ion-list-header>
+         Follow Teams
+        </ion-list-header>
+      <button ion-item *ngFor="let item of favourites" (click)="favouriteTapped($event,item)">
+        <ion-icon name="star"></ion-icon>
+        {{ item.team.name }}
+        <p>{{item.tournamentName}}</p>
+      </button>  
+    </ion-list>
   <p>First select a tourment,then you can follow teams from thire team pages</p>
  <button ion-button (click)='gotoTournaments()'>Find a Tournament</button>
 </ion-content>

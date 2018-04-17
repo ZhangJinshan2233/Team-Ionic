@@ -3,8 +3,8 @@ import { IonicPage, NavController, NavParams,LoadingController } from 'ionic-ang
 import{TeamDetailsPage,TeamHomePage}from '../pages'
 import{ELiteApi}from '../../shared/shared'
 import 'rxjs'
-
  import{Observable}from 'rxjs/Observable';
+ import * as _ from 'lodash';
 /**
  * Generated class for the TeamsPage page.
  *
@@ -18,13 +18,12 @@ import 'rxjs'
   templateUrl: 'teams.html',
 })
 export class TeamsPage {
+  private allTeams:any;
+  private allTeamsDivisions:any;
+
   teams=[];
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public loadingController:LoadingController, public eliteApp:ELiteApi) {
-   
-
-    
-  }
+    public loadingController:LoadingController, public eliteApp:ELiteApi) { }
 
   ionViewDidLoad() {
     let selectedTournament=this.navParams.data;
@@ -34,12 +33,22 @@ export class TeamsPage {
 
    loader.present().then(()=>{
     this.eliteApp.getTournamentData(selectedTournament.id).subscribe(data=>{
-      this.teams=data.teams;
+      this.allTeams=data.teams;
+      this.allTeamsDivisions=_.chain(data.teams)
+                              .groupBy('division')
+                              .toPairs()
+                              .map(item=>_.zipObject(['divisionName','divisionTeams'],item))
+                              .value();
+
+      this.teams=this.allTeamsDivisions;
+     console.log('division name',this.teams)
+      
       loader.dismiss();
     })
    })
    
   }
+
   itemSelected($event,team):void{
     this.navCtrl.push(TeamHomePage,team)
   }
